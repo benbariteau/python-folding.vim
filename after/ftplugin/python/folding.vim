@@ -17,7 +17,7 @@ blank_re = re.compile('^\\s*$')
 class_re = re.compile('^\\bclass\\b')
 func_re = re.compile('^\\bdef\\b')
 method_re = re.compile('^\\s+\\bdef\\b')
-decorator_re = re.compile('@')
+decorator_re = re.compile('^\\s*@')
 if (
     import_re.search(current_line) and
     not import_re.search(previous_line) and
@@ -38,7 +38,6 @@ elif (
     method_re.search(current_line) and
     not decorator_re.search(previous_line)
 ):
-    print current_line
     fold = '>2'
 elif (
     decorator_re.search(current_line) and
