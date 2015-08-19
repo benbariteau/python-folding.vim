@@ -1,31 +1,62 @@
-func! Foldexpr_python(lnum)
-    let current = getline(a:lnum)
-    let previous = getline(a:lnum-1)
-    let previous2 = getline(a:lnum-2)
-    let next = getline(a:lnum+1)
-    let next2 = getline(a:lnum+2)
+func! Python_folding(lnum)
+python << EOF
+import vim
+import re
 
-    let blank = '^\s*$'
-    let import = '\bimport\b'
-    if (current =~ import && previous !~ import && previous2 !~ import)
-        return '>1'
-    elseif (current =~ import && ((next !~ import) && (next2 !~ import)))
-        return '<1'
-    elseif (current !~ blank && next =~ blank && next2 =~ blank)
-        return '<1'
-    elseif current =~ '^class'
-        return '>1'
-    elseif current =~ '^def'
-        return '>1'
-    elseif (current =~'\s\+def' && previous !~ '\s\+@')
-        return '>2'
-    elseif (current =~ '^\s\+@' && previous !~ '\s\+@')
-        return '>2'
-    else
-        return '='
-    endif
+lnum = int(vim.eval('a:lnum'))
+
+current_line = vim.eval('getline({0})'.format(lnum))
+previous_line = vim.eval('getline({0})'.format(lnum-1))
+previous2_line = vim.eval('getline({0})'.format(lnum-2))
+next_line = vim.eval('getline({0})'.format(lnum+1))
+next2_line = vim.eval('getline({0})'.format(lnum+2))
+
+fold = '='
+import_re = re.compile('\\bimport\\b')
+blank_re = re.compile('^\\s*$')
+class_re = re.compile('^\\bclass\\b')
+func_re = re.compile('^\\bdef\\b')
+method_re = re.compile('\\bdef\\b')
+decorator_re = re.compile('@')
+if (
+    import_re.search(current_line) and
+    not import_re.search(previous_line) and
+    not import_re.search(previous2_line)
+):
+    fold = '>1'
+elif (
+    import_re.search(current_line) and
+    not import_re.search(next_line) and
+    not import_re.search(next2_line)
+):
+    fold = '<1'
+elif (
+    not blank_re.search(current_line) and
+    blank_re.search(next_line) and
+    blank_re.search(next2_line)
+):
+    fold = '<1'
+elif class_re.search(current_line):
+    fold = '>1'
+elif func_re.search(current_line):
+    fold = '>1'
+elif (
+    method_re.search(current_line) and
+    not decorator_re.search(previous_line)
+):
+    print current_line
+    fold = '>2'
+elif (
+    decorator_re.search(current_line) and
+    not decorator_re.search(previous_line)
+):
+    fold = '>2'
+
+vim.command("let foldval = '{0}'".format(fold))
+EOF
+return foldval
 endfunc
 
-setlocal foldexpr=Foldexpr_python(v:lnum)
+setlocal foldexpr=Python_folding(v:lnum)
 setlocal foldmethod=expr
 setlocal foldcolumn=3
