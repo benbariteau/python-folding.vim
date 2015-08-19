@@ -12,7 +12,7 @@ next_line = vim.eval('getline({0})'.format(lnum+1))
 next2_line = vim.eval('getline({0})'.format(lnum+2))
 
 fold = '='
-import_re = re.compile('\\bimport\\b')
+import_re = re.compile('^\\b(import|from)\\b')
 blank_re = re.compile('^\\s*$')
 class_re = re.compile('^\\bclass\\b')
 func_re = re.compile('^\\bdef\\b')
