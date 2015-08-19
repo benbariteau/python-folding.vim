@@ -76,10 +76,20 @@ def foldtext(foldstart, foldend):
             current += 1
             current_line = getline(current)
 
-    if def_re.search(current_line):
-        while not enddef_re.search(current_line):
+    if (
+        def_re.search(current_line) and
+        not enddef_re.search(current_line)
+    ):
+        beginning_line = current_line
+        signature_parts = list()
+        while not enddef_re.search(getline(current+1)):
             current += 1
-            current_line += string.strip(getline(current))
+            signature_parts.append(
+                string.strip(
+                    getline(current),
+                ).replace(',', ''),
+            )
+        current_line = beginning_line + ', '.join(signature_parts) + getline(current+1)
 
     return current_line
 
