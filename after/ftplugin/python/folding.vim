@@ -50,6 +50,26 @@ EOF
 return foldval
 endfunc
 
+func Python_foldtext()
+python << EOF
+foldstart = int(vim.eval('v:foldstart'))
+foldend = int(vim.eval('v:foldend'))
+start_line = vim.eval('getline({0})'.format(foldstart))
+
+import_re = re.compile('^\\b(import|from)\\b')
+
+text = start_line
+if import_re.search(start_line):
+    text = 'import ...'
+
+text = text + ' ({0} lines)'.format(foldend-foldstart)
+
+vim.command("let text = '{0}'".format(text))
+EOF
+return text
+endfunc
+
 setlocal foldexpr=Python_folding(v:lnum)
+setlocal foldtext=Python_foldtext()
 setlocal foldmethod=expr
 setlocal foldcolumn=3
