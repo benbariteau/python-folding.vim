@@ -30,12 +30,6 @@ elif (
     not import_re.search(next2_line)
 ):
     fold = '<1'
-elif (
-    not blank_re.search(current_line) and
-    blank_re.search(next_line) and
-    blank_re.search(next2_line)
-):
-    fold = '<1'
 elif class_re.search(current_line):
     fold = '>1'
 elif func_re.search(current_line):
