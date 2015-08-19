@@ -16,7 +16,7 @@ import_re = re.compile('^\\b(import|from)\\b')
 blank_re = re.compile('^\\s*$')
 class_re = re.compile('^\\bclass\\b')
 func_re = re.compile('^\\bdef\\b')
-method_re = re.compile('\\bdef\\b')
+method_re = re.compile('^\\s+\\bdef\\b')
 decorator_re = re.compile('@')
 if (
     import_re.search(current_line) and
