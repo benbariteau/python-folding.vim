@@ -6,9 +6,10 @@ func! Foldexpr_python(lnum)
     let next2 = getline(a:lnum+2)
 
     let blank = '^\s*$'
-    if (current =~ 'import' && previous !~ 'import' && previous2 !~ 'import')
+    let import = '\bimport\b'
+    if (current =~ import && previous !~ import && previous2 !~ import)
         return '>1'
-    elseif (current =~ 'import' && ((next !~ 'import') && (next2 !~ 'import')))
+    elseif (current =~ import && ((next !~ import) && (next2 !~ import)))
         return '<1'
     elseif (current !~ blank && next =~ blank && next2 =~ blank)
         return '<1'
