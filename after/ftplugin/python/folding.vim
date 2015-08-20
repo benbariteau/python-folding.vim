@@ -125,7 +125,7 @@ def foldtext(foldstart, foldend):
                     getline(current),
                 ).replace(',', ''),
             )
-        current_line = beginning_line + ', '.join(signature_parts) + getline(current+1)
+        current_line = beginning_line + ', '.join(signature_parts) + string.strip(getline(current+1))
 
     return current_line
 
