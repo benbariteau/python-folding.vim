@@ -17,7 +17,7 @@ def foldexpr(lnum):
     blank_re = re.compile('^\\s*$')
     class_re = re.compile('^\\bclass\\b')
     func_re = re.compile('^(\\s*)\\bdef\\b')
-    decorator_re = re.compile('^\\s*@')
+    decorator_re = re.compile('^(\\s*)@')
     if (
         import_re.search(current_line) and
         not import_re.search(previous_line) and
@@ -37,8 +37,8 @@ def foldexpr(lnum):
 
     func_match = func_re.search(current_line)
     if (
-        func_match # and
-        # not decorator_re.search(previous_line)
+        func_match and
+        not decorator_re.search(previous_line)
     ):
         spaces = func_match.group(1)
         if len(spaces) == 0:
@@ -65,13 +65,35 @@ def foldexpr(lnum):
                 return '>2'
         return '>1'
 
-    """
+    decorator_match = decorator_re.search(current_line)
     if (
-        decorator_re.search(current_line) and
+        decorator_match and
         not decorator_re.search(previous_line)
     ):
-        return '>2'
-        """
+        spaces = decorator_match.group(1)
+        if len(spaces) == 0:
+            # top level construct
+            return '>1'
+
+        curr = lnum - 1
+        current = getline(curr)
+        while not (class_re.search(current) or func_re.search(current)):
+            curr -= 1
+            current = getline(curr)
+
+        if class_re.search(current):
+            # this is a method
+            return '>2'
+        else:
+            prev_func_match = func_re.search(current)
+            prev_spaces = prev_func_match.group(1)
+            if len(spaces) > len(prev_spaces):
+                # this is a nested function, don't fold
+                return '='
+            else:
+                # method
+                return '>2'
+        return '>1'
 
     return '='
 
