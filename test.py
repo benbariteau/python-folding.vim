@@ -6,6 +6,7 @@ from foo import bar
 
 
 class Baz(object):
+    @butt
     def thing(self):
         pass
 
@@ -18,6 +19,12 @@ class Baz(object):
     def things(
         butt,
         fart,
+    ):
+        pass
+
+    def things(
+        butt,
+        fart
     ):
         pass
 
