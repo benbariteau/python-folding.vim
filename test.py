@@ -35,9 +35,16 @@ class Baz(object):
         pass
 
 
+thing = dict()
+
+
 @decorum(
     a_lot=True,
 )
 @fart
 def butt(fart):
+    pass
+
+
+def foo():
     pass

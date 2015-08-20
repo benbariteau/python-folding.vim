@@ -80,6 +80,13 @@ def foldexpr(lnum):
         spaces = decorator_match.group(1)
         return indent_match(lnum, spaces)
 
+    if (
+        blank_re.search(current_line) and
+        blank_re.search(next_line)
+    ):
+        # end of class or top-level function
+        return '<1'
+
     return '='
 
 lnum = int(vim.eval('a:lnum'))
