@@ -72,7 +72,7 @@ def foldexpr(lnum):
     decorator_match = decorator_re.search(current_line)
     if (
         decorator_match and
-        not decorator_re.search(previous_line)
+        blank_re.search(previous_line)
     ):
         spaces = decorator_match.group(1)
         return indent_match(lnum, spaces)
