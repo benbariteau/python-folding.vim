@@ -7,11 +7,11 @@ def getline(lnum):
     return vim.eval('getline({0})'.format(lnum))
 
 def foldexpr(lnum):
-    current_line = vim.eval('getline({0})'.format(lnum))
-    previous_line = vim.eval('getline({0})'.format(lnum-1))
-    previous2_line = vim.eval('getline({0})'.format(lnum-2))
-    next_line = vim.eval('getline({0})'.format(lnum+1))
-    next2_line = vim.eval('getline({0})'.format(lnum+2))
+    current_line = getline(lnum)
+    previous_line = getline(lnum-1)
+    previous2_line = getline(lnum-2)
+    next_line = getline(lnum+1)
+    next2_line = getline(lnum+2)
 
     import_re = re.compile('^\\b(import|from)\\b')
     blank_re = re.compile('^\\s*$')
