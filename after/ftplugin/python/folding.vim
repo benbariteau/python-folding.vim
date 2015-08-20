@@ -3,6 +3,9 @@ python << EOF
 import vim
 import re
 
+def getline(lnum):
+    return vim.eval('getline({0})'.format(lnum))
+
 def foldexpr(lnum):
     current_line = vim.eval('getline({0})'.format(lnum))
     previous_line = vim.eval('getline({0})'.format(lnum-1))
@@ -13,8 +16,7 @@ def foldexpr(lnum):
     import_re = re.compile('^\\b(import|from)\\b')
     blank_re = re.compile('^\\s*$')
     class_re = re.compile('^\\bclass\\b')
-    func_re = re.compile('^\\bdef\\b')
-    method_re = re.compile('^\\s+\\bdef\\b')
+    func_re = re.compile('^(\\s*)\\bdef\\b')
     decorator_re = re.compile('^\\s*@')
     if (
         import_re.search(current_line) and
@@ -22,26 +24,54 @@ def foldexpr(lnum):
         not import_re.search(previous2_line)
     ):
         return '>1'
-    elif (
+
+    if (
         import_re.search(current_line) and
         not import_re.search(next_line) and
         not import_re.search(next2_line)
     ):
         return '<1'
-    elif class_re.search(current_line):
+
+    if class_re.search(current_line):
         return '>1'
-    elif func_re.search(current_line):
-        return '>1'
-    elif (
-        method_re.search(current_line) and
-        not decorator_re.search(previous_line)
+
+    func_match = func_re.search(current_line)
+    if (
+        func_match # and
+        # not decorator_re.search(previous_line)
     ):
-        return '>2'
-    elif (
+        spaces = func_match.group(1)
+        if len(spaces) == 0:
+            # this is a top-level function
+            return '>1'
+
+        curr = lnum - 1
+        current = getline(curr)
+        while not (class_re.search(current) or func_re.search(current)):
+            curr -= 1
+            current = getline(curr)
+
+        if class_re.search(current):
+            # this is a method
+            return '>2'
+        else:
+            prev_func_match = func_re.search(current)
+            prev_spaces = prev_func_match.group(1)
+            if len(spaces) > len(prev_spaces):
+                # this is a nested function, don't fold
+                return '='
+            else:
+                # method
+                return '>2'
+        return '>1'
+
+    """
+    if (
         decorator_re.search(current_line) and
         not decorator_re.search(previous_line)
     ):
         return '>2'
+        """
 
     return '='
 
@@ -58,8 +88,6 @@ func! Python_foldtext()
 python << EOF
 import string
 
-def getline(lnum):
-    return vim.eval('getline({0})'.format(lnum))
 
 def foldtext(foldstart, foldend):
     current = foldstart
