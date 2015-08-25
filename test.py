@@ -15,7 +15,7 @@ class Baz(object):
     def thing2(self):
         def thing3():
             pass
-    
+
     def things(
         butt,
         fart,
@@ -35,8 +35,19 @@ class Baz(object):
         pass
 
 
+class FooBar(object):
+    def baz(self):
+        pass
+
+
 thing = dict()
 
+
+@dec(
+    ora='te',
+)
+def foobar():
+    pass
 
 @decorum(
     a_lot=True,

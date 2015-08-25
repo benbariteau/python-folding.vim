@@ -64,7 +64,10 @@ def foldexpr(lnum):
     func_match = func_re.search(current_line)
     if (
         func_match and
-        not decorator_re.search(previous_line)
+        (
+            blank_re.search(previous_line) or
+            class_re.search(previous_line)
+        )
     ):
         spaces = func_match.group(1)
         return indent_match(lnum, spaces)
