@@ -12,6 +12,9 @@ decorator_re = re.compile('^(\\s*)@')
 def getline(lnum):
     return vim.eval('getline({0})'.format(lnum))
 
+def foldlevel(lnum):
+    return int(vim.eval('foldlevel({0})'.format(lnum)))
+
 def indent_match(lnum, spaces):
     if len(spaces) == 0:
         # this is a top-level function
@@ -42,7 +45,6 @@ def foldexpr(lnum):
     previous_line = getline(lnum-1)
     previous2_line = getline(lnum-2)
     next_line = getline(lnum+1)
-    next2_line = getline(lnum+2)
 
     if (
         import_re.search(current_line) and
@@ -52,11 +54,11 @@ def foldexpr(lnum):
         return '>1'
 
     if (
-        import_re.search(current_line) and
-        not import_re.search(next_line) and
-        not import_re.search(next2_line)
+        import_re.search(previous_line) and
+        not import_re.search(current_line) and
+        not import_re.search(next_line)
     ):
-        return '<1'
+        return '0'
 
     if class_re.search(current_line):
         return '>1'
@@ -85,10 +87,14 @@ def foldexpr(lnum):
 
     if (
         blank_re.search(current_line) and
-        blank_re.search(next_line)
+        blank_re.search(previous_line)
     ):
         # end of class or top-level function
-        return '<1'
+        return '0'
+
+    last_foldlevel = foldlevel(lnum-1)
+    if last_foldlevel != -1:
+        return last_foldlevel
 
     return '='
 
