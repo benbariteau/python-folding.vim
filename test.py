@@ -49,6 +49,7 @@ thing = dict()
 def foobar():
     pass
 
+
 @decorum(
     a_lot=True,
 )
@@ -58,4 +59,9 @@ def butt(fart):
 
 
 def foo():
+    pass
+
+
+# fart butt
+def butt():
     pass

@@ -8,6 +8,7 @@ blank_re = re.compile('^\\s*$')
 class_re = re.compile('^\\bclass\\b')
 func_re = re.compile('^(\\s*)\\bdef\\b')
 decorator_re = re.compile('^(\\s*)@')
+comment_re = re.compile('^#')
 
 def getline(lnum):
     return vim.eval('getline({0})'.format(lnum))
@@ -68,7 +69,8 @@ def foldexpr(lnum):
         func_match and
         (
             blank_re.search(previous_line) or
-            class_re.search(previous_line)
+            class_re.search(previous_line) or
+            comment_re.search(previous_line)
         )
     ):
         spaces = func_match.group(1)
