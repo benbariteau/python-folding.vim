@@ -154,7 +154,7 @@ foldstart = int(vim.eval('v:foldstart'))
 foldend = int(vim.eval('v:foldend'))
 
 text = foldtext(foldstart, foldend)
-text = text + ' ({0} lines)'.format(foldend-foldstart)
+text = text + ' ({0} lines)'.format(foldend-foldstart+1)
 
 vim.command("let text = '{0}'".format(text))
 EOF
